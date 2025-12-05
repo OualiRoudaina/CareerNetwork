@@ -1,4 +1,4 @@
-import Link from 'next/link';
+/*import Link from 'next/link';
 import { IJob } from '@/models/Job';
 
 interface JobCardProps {
@@ -90,4 +90,132 @@ export default function JobCard({ job }: JobCardProps) {
     </Link>
   );
 }
+*/
 
+
+
+import Link from 'next/link';
+import { IJob } from '@/models/Job';
+
+interface JobCardProps {
+  job: IJob;
+}
+
+export default function JobCard({ job }: JobCardProps) {
+  const formatSalary = () => {
+    if (!job.salary) return null;
+    const { min, max } = job.salary;
+    if (min && max) return `${min}€ - ${max}€`;
+    if (min) return `À partir de ${min}€`;
+    return null;
+  };
+
+  return (
+    <Link href={`/jobs/${job._id}`}>
+      <div className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:-translate-y-2 card-interactive">
+        {/* Gradient overlay on hover */}
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        
+        {/* Top accent bar */}
+        <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+
+        <div className="relative p-6 z-10">
+          {/* Header */}
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex-1 pr-4">
+              <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300 line-clamp-2">
+                {job.title}
+              </h3>
+              <p className="text-base font-semibold text-gray-700 dark:text-gray-300 line-clamp-1">
+                {job.company}
+              </p>
+            </div>
+            <div className="relative">
+              <span className="inline-flex items-center px-4 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+                {job.type === 'full-time' && '⏰ Temps plein'}
+                {job.type === 'part-time' && '🕐 Temps partiel'}
+                {job.type === 'contract' && '📄 Contrat'}
+                {job.type === 'internship' && '🎓 Stage'}
+              </span>
+            </div>
+          </div>
+
+          {/* Details */}
+          <div className="space-y-2 mb-4">
+            <div className="flex items-center text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors duration-300">
+              <div className="w-5 h-5 mr-2 flex-shrink-0">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                </svg>
+              </div>
+              <span className="text-sm font-medium">{job.location}</span>
+            </div>
+
+            <div className="flex items-center text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors duration-300">
+              <div className="w-5 h-5 mr-2 flex-shrink-0">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <span className="text-sm font-medium">{job.experience}</span>
+            </div>
+
+            {formatSalary() && (
+              <div className="flex items-center text-green-600 dark:text-green-400 font-semibold">
+                <div className="w-5 h-5 mr-2 flex-shrink-0">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
+                <span className="text-sm">{formatSalary()}</span>
+              </div>
+            )}
+          </div>
+
+          {/* Skills */}
+          {job.skills && job.skills.length > 0 && (
+            <div className="mb-4">
+              <div className="flex flex-wrap gap-2">
+                {job.skills.slice(0, 4).map((skill, index) => (
+                  <span
+                    key={index}
+                    className="px-3 py-1 text-xs font-semibold bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 text-gray-800 dark:text-gray-200 rounded-full shadow-sm group-hover:shadow-md transition-all duration-300 group-hover:scale-105"
+                  >
+                    {skill}
+                  </span>
+                ))}
+                {job.skills.length > 4 && (
+                  <span className="px-3 py-1 text-xs font-semibold bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 rounded-full shadow-sm">
+                    +{job.skills.length - 4}
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Description */}
+          <p className="text-gray-600 dark:text-gray-400 text-sm line-clamp-2 mb-4 leading-relaxed">
+            {job.description}
+          </p>
+
+          {/* Footer */}
+          <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
+            <span className="text-xs text-gray-500 dark:text-gray-500">
+              Publié récemment
+            </span>
+            <div className="flex items-center text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:from-blue-700 group-hover:to-purple-700 transition-all duration-300">
+              <span>Voir les détails</span>
+              <svg className="w-4 h-4 ml-1 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        {/* Shimmer effect on hover */}
+        <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000 bg-gradient-to-r from-transparent via-white/10 to-transparent"></div>
+      </div>
+    </Link>
+  );
+}
