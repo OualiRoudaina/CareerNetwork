@@ -1,4 +1,4 @@
-import Link from 'next/link';
+/*import Link from 'next/link';
 import { useSession, signOut } from 'next-auth/react';
 import { useState } from 'react';
 
@@ -217,4 +217,281 @@ export default function Navbar() {
     </nav>
   );
 }
+*/
 
+
+import Link from 'next/link';
+import { useSession, signOut } from 'next-auth/react';
+import { useState, useEffect } from 'react';
+
+export default function Navbar() {
+  const { data: session } = useSession();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 20);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        scrolled
+          ? 'bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-lg'
+          : 'bg-white/60 dark:bg-gray-900/60 backdrop-blur-md'
+      }`}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between items-center h-20">
+          {/* Logo */}
+          <Link href="/" className="flex items-center group">
+            <div className="relative">
+              <span className="text-3xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
+                CareerNetwork
+              </span>
+              <div className="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-500"></div>
+            </div>
+          </Link>
+
+          {/* Desktop Navigation */}
+          <div className="hidden lg:flex items-center space-x-1">
+            <Link
+              href="/jobs"
+              className="relative px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-300 group"
+            >
+              <span className="relative z-10">Offres d'emploi</span>
+              <span className="absolute inset-0 bg-blue-50 dark:bg-blue-900/20 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+            </Link>
+
+            {session && (
+              <>
+                {session.user.userType === 'candidate' && (
+                  <>
+                    <Link
+                      href="/profile"
+                      className="relative px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300 group"
+                    >
+                      <span className="relative z-10">Mon profil</span>
+                      <span className="absolute inset-0 bg-purple-50 dark:bg-purple-900/20 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+                    </Link>
+                    <Link
+                      href="/recommendations"
+                      className="relative px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-pink-600 dark:hover:text-pink-400 transition-all duration-300 group"
+                    >
+                      <span className="relative z-10">Recommandations IA</span>
+                      <span className="absolute inset-0 bg-pink-50 dark:bg-pink-900/20 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+                    </Link>
+                    <Link
+                      href="/applications"
+                      className="relative px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-300 group"
+                    >
+                      <span className="relative z-10">Mes candidatures</span>
+                      <span className="absolute inset-0 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+                    </Link>
+                  </>
+                )}
+                {session.user.userType === 'recruiter' && (
+                  <>
+                    <Link
+                      href="/recruiter/dashboard"
+                      className="relative px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300 group"
+                    >
+                      <span className="relative z-10">Mes offres</span>
+                      <span className="absolute inset-0 bg-purple-50 dark:bg-purple-900/20 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+                    </Link>
+                    <Link
+                      href="/applications"
+                      className="relative px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-300 group"
+                    >
+                      <span className="relative z-10">Candidatures</span>
+                      <span className="absolute inset-0 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+                    </Link>
+                  </>
+                )}
+                {session.user.role === 'admin' && (
+                  <Link
+                    href="/admin"
+                    className="relative px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 group"
+                  >
+                    <span className="relative z-10">Admin</span>
+                    <span className="absolute inset-0 bg-red-50 dark:bg-red-900/20 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+                  </Link>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Auth Buttons */}
+          <div className="hidden lg:flex items-center space-x-3">
+            {session ? (
+              <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3 px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                    {session.user.name?.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                    {session.user.name}
+                  </span>
+                </div>
+                <button
+                  onClick={() => signOut()}
+                  className="relative px-6 py-2.5 bg-gradient-to-r from-red-500 to-pink-600 text-white font-bold rounded-xl overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-red-500/50"
+                >
+                  <span className="relative z-10">Déconnexion</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-red-600 to-pink-700 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center space-x-3">
+                <Link
+                  href="/login"
+                  className="px-5 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors duration-300"
+                >
+                  Connexion
+                </Link>
+                <Link
+                  href="/register"
+                  className="relative px-6 py-2.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold rounded-xl overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50"
+                >
+                  <span className="relative z-10">Inscription</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-700 via-purple-700 to-pink-700 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-300"
+          >
+            <div className="w-6 h-5 flex flex-col justify-between">
+              <span
+                className={`w-full h-0.5 bg-gray-700 dark:bg-gray-300 transition-all duration-300 ${
+                  isMenuOpen ? 'rotate-45 translate-y-2' : ''
+                }`}
+              ></span>
+              <span
+                className={`w-full h-0.5 bg-gray-700 dark:bg-gray-300 transition-all duration-300 ${
+                  isMenuOpen ? 'opacity-0' : ''
+                }`}
+              ></span>
+              <span
+                className={`w-full h-0.5 bg-gray-700 dark:bg-gray-300 transition-all duration-300 ${
+                  isMenuOpen ? '-rotate-45 -translate-y-2' : ''
+                }`}
+              ></span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      <div
+        className={`lg:hidden overflow-hidden transition-all duration-300 ${
+          isMenuOpen ? 'max-h-screen opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        <div className="px-4 pt-2 pb-6 space-y-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-t border-gray-200 dark:border-gray-800">
+          <Link
+            href="/jobs"
+            className="block px-4 py-3 text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors duration-300"
+          >
+            Offres d'emploi
+          </Link>
+          {session && (
+            <>
+              {session.user.userType === 'candidate' && (
+                <>
+                  <Link
+                    href="/profile"
+                    className="block px-4 py-3 text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors duration-300"
+                  >
+                    Mon profil
+                  </Link>
+                  <Link
+                    href="/recommendations"
+                    className="block px-4 py-3 text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-pink-50 dark:hover:bg-pink-900/20 rounded-lg transition-colors duration-300"
+                  >
+                    Recommandations IA
+                  </Link>
+                  <Link
+                    href="/applications"
+                    className="block px-4 py-3 text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors duration-300"
+                  >
+                    Mes candidatures
+                  </Link>
+                </>
+              )}
+              {session.user.userType === 'recruiter' && (
+                <>
+                  <Link
+                    href="/recruiter/dashboard"
+                    className="block px-4 py-3 text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors duration-300"
+                  >
+                    Mes offres
+                  </Link>
+                  <Link
+                    href="/applications"
+                    className="block px-4 py-3 text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 rounded-lg transition-colors duration-300"
+                  >
+                    Candidatures
+                  </Link>
+                </>
+              )}
+              {session.user.role === 'admin' && (
+                <Link
+                  href="/admin"
+                  className="block px-4 py-3 text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors duration-300"
+                >
+                  Admin
+                </Link>
+              )}
+            </>
+          )}
+          <div className="pt-4 space-y-2">
+            {session ? (
+              <>
+                <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg">
+                  <div className="flex items-center space-x-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold">
+                      {session.user.name?.charAt(0).toUpperCase()}
+                    </div>
+                    <span className="text-base font-bold text-gray-800 dark:text-gray-200">
+                      {session.user.name}
+                    </span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => signOut()}
+                  className="w-full px-4 py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white font-bold rounded-lg text-center transition-all duration-300 hover:shadow-lg"
+                >
+                  Déconnexion
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="block px-4 py-3 text-base font-semibold text-center text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors duration-300"
+                >
+                  Connexion
+                </Link>
+                <Link
+                  href="/register"
+                  className="block px-4 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold rounded-lg text-center transition-all duration-300 hover:shadow-lg"
+                >
+                  Inscription
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </nav>
+  );
+}
