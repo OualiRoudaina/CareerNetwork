@@ -23,12 +23,26 @@ if (!global.mongoose) {
 
 async function dbConnect(): Promise<typeof mongoose> {
   if (cached.conn) {
-    return cached.conn;
+    // Check if connection is still alive
+    if (mongoose.connection.readyState === 1) {
+      return cached.conn;
+    } else {
+      // Connection is dead, reset cache
+      cached.conn = null;
+      cached.promise = null;
+    }
   }
 
   if (!cached.promise) {
     const opts = {
       bufferCommands: false,
+      maxPoolSize: 10, // Maintain up to 10 socket connections
+      serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
+      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
+      connectTimeoutMS: 30000, // Give up initial connection after 30 seconds
+      heartbeatFrequencyMS: 10000, // Check server status every 10 seconds
+      retryWrites: true,
+      retryReads: true,
     };
 
     cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongoose) => {

@@ -13,7 +13,7 @@ export default function Footer() {
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <h3 className="text-2xl font-bold mb-4 bg-gradient-to-r from-indigo-600 to-emerald-600 bg-clip-text text-transparent">
               CareerNetwork
             </h3>
             <p className="text-gray-300 leading-relaxed">
@@ -71,7 +71,7 @@ export default function Footer() {
         <div className="mt-12 pt-8 border-t border-gray-700/50 text-center">
           <p className="text-gray-400">
             &copy; {new Date().getFullYear()}{' '}
-            <span className="font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+            <span className="font-semibold bg-gradient-to-r from-indigo-600 to-emerald-600 bg-clip-text text-transparent">
               CareerNetwork
             </span>
             . Tous droits réservés.
@@ -85,24 +85,30 @@ export default function Footer() {
 
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Footer() {
   return (
     <footer className="relative bg-gradient-to-br from-gray-900 via-gray-800 to-black text-white overflow-hidden">
       {/* Animated background */}
       <div className="absolute inset-0 opacity-10">
-        <div className="absolute top-0 -left-4 w-72 h-72 bg-purple-500 rounded-full mix-blend-multiply filter blur-3xl animate-float"></div>
-        <div className="absolute top-0 -right-4 w-72 h-72 bg-blue-500 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
-        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-pink-500 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
+        <div className="absolute top-0 -left-4 w-72 h-72 bg-emerald-800 rounded-full mix-blend-multiply filter blur-3xl animate-float"></div>
+        <div className="absolute top-0 -right-4 w-72 h-72 bg-indigo-800 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '2s' }}></div>
+        <div className="absolute -bottom-8 left-20 w-72 h-72 bg-blue-800 rounded-full mix-blend-multiply filter blur-3xl animate-float" style={{ animationDelay: '4s' }}></div>
       </div>
 
       <div className="relative max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           {/* Brand */}
           <div className="col-span-1 md:col-span-2">
-            <h3 className="text-3xl font-black mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
-              CareerNetwork
-            </h3>
+            <div className="relative h-16 w-64 mb-4">
+              <Image
+                src="/images/logo.png"
+                alt="CareerNetwork"
+                fill
+                className="object-contain"
+              />
+            </div>
             <p className="text-gray-300 leading-relaxed mb-6 max-w-md">
               Plateforme intelligente de mise en relation entre talents et opportunités.
               Propulsez votre carrière avec l'IA.
@@ -131,19 +137,19 @@ export default function Footer() {
             <ul className="space-y-3">
               <li>
                 <Link href="/jobs" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
-                  <span className="w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 mr-0 group-hover:w-3 group-hover:mr-2 transition-all duration-300"></span>
+                  <span className="w-0 h-0.5 bg-gradient-to-r from-indigo-600 to-emerald-600 mr-0 group-hover:w-3 group-hover:mr-2 transition-all duration-300"></span>
                   Offres d'emploi
                 </Link>
               </li>
               <li>
                 <Link href="/profile" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
-                  <span className="w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 mr-0 group-hover:w-3 group-hover:mr-2 transition-all duration-300"></span>
+                  <span className="w-0 h-0.5 bg-gradient-to-r from-indigo-600 to-emerald-600 mr-0 group-hover:w-3 group-hover:mr-2 transition-all duration-300"></span>
                   Mon profil
                 </Link>
               </li>
               <li>
                 <Link href="/recommendations" className="text-gray-300 hover:text-white transition-colors duration-300 flex items-center group">
-                  <span className="w-0 h-0.5 bg-gradient-to-r from-blue-400 to-purple-400 mr-0 group-hover:w-3 group-hover:mr-2 transition-all duration-300"></span>
+                  <span className="w-0 h-0.5 bg-gradient-to-r from-indigo-600 to-emerald-600 mr-0 group-hover:w-3 group-hover:mr-2 transition-all duration-300"></span>
                   Recommandations IA
                 </Link>
               </li>
@@ -176,10 +182,15 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-gray-700/50">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <p className="text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm flex items-center">
               &copy; {new Date().getFullYear()}{' '}
-              <span className="font-semibold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                CareerNetwork
+              <span className="relative h-6 w-32 mx-2 inline-block">
+                <Image
+                  src="/images/logo.png"
+                  alt="CareerNetwork"
+                  fill
+                  className="object-contain opacity-80"
+                />
               </span>
               . Tous droits réservés.
             </p>

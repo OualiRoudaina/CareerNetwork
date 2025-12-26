@@ -15,7 +15,15 @@ export default async function handler(
     try {
       const { search, location, experience, type, skills } = req.query;
 
-      let query: any = { isActive: true };
+      // Inclure les jobs approuvés OU les jobs sans statut (rétrocompatibilité avec les jobs existants)
+      let query: any = { 
+        isActive: true,
+        $or: [
+          { status: 'approved' },
+          { status: { $exists: false } }, // Jobs créés avant l'ajout du système d'approbation
+          { status: null } // Jobs avec statut null
+        ]
+      };
 
       if (search) {
         query.$or = [
@@ -93,7 +101,8 @@ export default async function handler(
         experience,
         salary,
         type: type || 'full-time',
-        isActive: true,
+        isActive: false, // Inactif jusqu'à approbation
+        status: 'pending', // En attente d'approbation
         postedBy: session.user.id,
       });
 

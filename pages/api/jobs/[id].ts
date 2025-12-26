@@ -40,10 +40,16 @@ export default async function handler(
         return res.status(404).json({ message: 'Job not found' });
       }
 
-      // Vérifier que l'utilisateur est le propriétaire ou un admin
+      // Vérifier que l'utilisateur est le propriétaire ou un superadmin
       const user = await User.findById(session.user.id);
-      if (user?.role !== 'admin' && job.postedBy?.toString() !== session.user.id) {
+      if (user?.role !== 'superadmin' && job.postedBy?.toString() !== session.user.id) {
         return res.status(403).json({ message: 'You can only update your own jobs' });
+      }
+      
+      // Si un job est mis à jour, remettre en pending si ce n'est pas un superadmin
+      if (user?.role !== 'superadmin' && job.status === 'approved') {
+        req.body.status = 'pending';
+        req.body.isActive = false;
       }
 
       const updatedJob = await Job.findByIdAndUpdate(id, req.body, { new: true });
@@ -66,9 +72,9 @@ export default async function handler(
         return res.status(404).json({ message: 'Job not found' });
       }
 
-      // Vérifier que l'utilisateur est le propriétaire ou un admin
+      // Vérifier que l'utilisateur est le propriétaire ou un superadmin
       const user = await User.findById(session.user.id);
-      if (user?.role !== 'admin' && job.postedBy?.toString() !== session.user.id) {
+      if (user?.role !== 'superadmin' && job.postedBy?.toString() !== session.user.id) {
         return res.status(403).json({ message: 'You can only delete your own jobs' });
       }
 

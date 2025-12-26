@@ -126,7 +126,7 @@ export default function JobDetails() {
       </Head>
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-grow bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <main className="flex-grow bg-gray-50 dark:bg-gray-900 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <button
               onClick={() => router.back()}

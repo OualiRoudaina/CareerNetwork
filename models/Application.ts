@@ -5,10 +5,17 @@ export interface IApplication extends Document {
   candidate: mongoose.Types.ObjectId;
   recruiter: mongoose.Types.ObjectId;
   status: 'pending' | 'reviewed' | 'accepted' | 'rejected';
+  customStatus?: string; // Statut personnalisé défini par le recruteur
   coverLetter?: string;
   cvUrl?: string;
   appliedAt: Date;
   reviewedAt?: Date;
+  statusHistory?: {
+    status: string;
+    changedBy: mongoose.Types.ObjectId;
+    changedAt: Date;
+    note?: string;
+  }[];
   createdAt: Date;
   updatedAt: Date;
 }
@@ -35,6 +42,9 @@ const ApplicationSchema: Schema = new Schema(
       enum: ['pending', 'reviewed', 'accepted', 'rejected'],
       default: 'pending',
     },
+    customStatus: {
+      type: String,
+    },
     coverLetter: {
       type: String,
     },
@@ -44,6 +54,17 @@ const ApplicationSchema: Schema = new Schema(
     reviewedAt: {
       type: Date,
     },
+    statusHistory: [
+      {
+        status: String,
+        changedBy: {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+        },
+        changedAt: Date,
+        note: String,
+      },
+    ],
   },
   {
     timestamps: true,

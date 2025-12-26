@@ -1,0 +1,33 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Installer les dépendances système nécessaires
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copier et installer les dépendances Python
+COPY requirements-gcp.txt requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements-gcp.txt
+
+# Copier tout le code
+COPY . .
+
+# Créer les dossiers nécessaires
+RUN mkdir -p data models
+
+# Exposer le port (Cloud Run utilise le port défini par PORT env var)
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:${PORT:-8080}/health || exit 1
+
+# Commande de démarrage (Cloud Run attend sur le port défini par PORT)
+# Utiliser app.py qui supporte maintenant S3 et GCS
+CMD exec uvicorn app:app --host 0.0.0.0 --port ${PORT:-8080}
+

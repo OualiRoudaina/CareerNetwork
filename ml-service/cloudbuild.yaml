@@ -1,0 +1,17 @@
+steps:
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - 'build'
+      - '-f'
+      - 'Dockerfile'
+      - '-t'
+      - 'us-central1-docker.pkg.dev/careerlink-482320/cloud-run-source-deploy/careerlink-ml-service:latest'
+      - '.'
+images:
+  - 'us-central1-docker.pkg.dev/careerlink-482320/cloud-run-source-deploy/careerlink-ml-service:latest'
+options:
+  machineType: 'E2_HIGHCPU_8'
+  logging: CLOUD_LOGGING_ONLY
+  diskSizeGb: 100
+timeout: '1800s'
+

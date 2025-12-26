@@ -57,7 +57,7 @@ export default function Profile() {
       </Head>
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-grow bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <main className="flex-grow bg-gray-50 dark:bg-gray-900 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
               Mon profil
@@ -133,9 +133,9 @@ export default function Profile() {
       </Head>
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-grow pt-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+        <main className="flex-grow pt-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
           {/* Hero Section */}
-          <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 py-12 relative overflow-hidden">
+          <div className="bg-gradient-to-r from-indigo-900 via-blue-900 to-emerald-900 py-12 relative overflow-hidden premium-glow">
             <div className="absolute inset-0 opacity-10" style={{
               backgroundImage: "url(\"data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E\")"
             }}></div>
@@ -157,7 +157,7 @@ export default function Profile() {
           </div>
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             {/* Tips Card */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800 rounded-2xl p-6 mb-8 animate-fadeIn">
+            <div className="bg-gradient-to-r from-indigo-50 to-emerald-50 dark:from-indigo-900/20 dark:to-emerald-900/20 border border-indigo-200 dark:border-indigo-800 rounded-2xl p-6 mb-8 animate-fadeIn premium-glow">
               <div className="flex items-start">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center text-white text-2xl">

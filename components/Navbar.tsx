@@ -12,7 +12,7 @@ export default function Navbar() {
         <div className="flex justify-between h-16">
           <div className="flex">
             <Link href="/" className="flex items-center group">
-              <span className="text-2xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-blue-600 bg-clip-text text-transparent group-hover:from-blue-700 group-hover:via-purple-700 group-hover:to-blue-700 transition-all duration-300">
+              <span className="text-2xl font-bold bg-gradient-to-r from-indigo-800 via-blue-800 to-emerald-800 bg-clip-text text-transparent group-hover:from-indigo-900 group-hover:via-blue-900 group-hover:to-emerald-900 transition-all duration-300">
                 CareerNetwork
               </span>
             </Link>
@@ -22,7 +22,7 @@ export default function Navbar() {
                 className="inline-flex items-center px-3 pt-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 relative group transition-colors duration-200"
               >
                 Offres d'emploi
-                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-300"></span>
+                <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-indigo-800 to-emerald-800 group-hover:w-full transition-all duration-300"></span>
               </Link>
               {session && (
                 <>
@@ -39,6 +39,12 @@ export default function Navbar() {
                         className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
                       >
                         Recommandations
+                      </Link>
+                      <Link
+                        href="/certifications"
+                        className="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400"
+                      >
+                        Certifications
                       </Link>
                       <Link
                         href="/applications"
@@ -99,7 +105,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/register"
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-6 py-2 rounded-lg text-sm font-semibold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+                  className="bg-gradient-to-r from-indigo-800 to-emerald-800 hover:from-indigo-900 hover:to-emerald-900 text-white px-6 py-2 rounded-lg text-sm font-semibold shadow-xl hover:shadow-2xl premium-glow transform hover:-translate-y-0.5 transition-all duration-200"
                 >
                   Inscription
                 </Link>
@@ -146,6 +152,12 @@ export default function Navbar() {
                       className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                     >
                       Recommandations
+                    </Link>
+                    <Link
+                      href="/certifications"
+                      className="block px-3 py-2 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                    >
+                      Certifications
                     </Link>
                     <Link
                       href="/applications"
@@ -221,8 +233,10 @@ export default function Navbar() {
 
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { useState, useEffect } from 'react';
+import Notifications from './Notifications';
 
 export default function Navbar() {
   const { data: session } = useSession();
@@ -249,11 +263,14 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center group">
-            <div className="relative">
-              <span className="text-3xl font-black bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent animate-gradient">
-                CareerNetwork
-              </span>
-              <div className="absolute -bottom-1 left-0 w-0 h-1 bg-gradient-to-r from-blue-600 to-purple-600 group-hover:w-full transition-all duration-500"></div>
+            <div className="relative h-16 w-72">
+              <Image
+                src="/images/logo.png"
+                alt="CareerNetwork"
+                fill
+                className="object-contain"
+                priority
+              />
             </div>
           </Link>
 
@@ -312,13 +329,13 @@ export default function Navbar() {
                     </Link>
                   </>
                 )}
-                {session.user.role === 'admin' && (
+                {session.user.role === 'superadmin' && (
                   <Link
-                    href="/admin"
-                    className="relative px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 transition-all duration-300 group"
+                    href="/superadmin"
+                    className="relative px-4 py-2 text-sm font-semibold text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition-all duration-300 group"
                   >
-                    <span className="relative z-10">Admin</span>
-                    <span className="absolute inset-0 bg-red-50 dark:bg-red-900/20 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
+                    <span className="relative z-10">Super Admin</span>
+                    <span className="absolute inset-0 bg-purple-50 dark:bg-purple-900/20 rounded-lg scale-0 group-hover:scale-100 transition-transform duration-300"></span>
                   </Link>
                 )}
               </>
@@ -329,8 +346,9 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center space-x-3">
             {session ? (
               <div className="flex items-center space-x-4">
-                <div className="flex items-center space-x-3 px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-full">
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                <Notifications />
+                <div className="flex items-center space-x-3 px-4 py-2 bg-gradient-to-r from-indigo-50 to-emerald-50 dark:from-indigo-900/20 dark:to-emerald-900/20 rounded-full">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-r from-indigo-800 to-emerald-800 flex items-center justify-center text-white font-bold text-sm premium-glow">
                     {session.user.name?.charAt(0).toUpperCase()}
                   </div>
                   <span className="text-sm font-semibold text-gray-800 dark:text-gray-200">
@@ -355,10 +373,10 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/register"
-                  className="relative px-6 py-2.5 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold rounded-xl overflow-hidden group transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/50"
+                  className="relative px-6 py-2.5 bg-gradient-to-r from-indigo-800 via-blue-800 to-emerald-800 text-white font-bold rounded-xl overflow-hidden group transition-all duration-300 hover:shadow-xl hover:shadow-emerald-500/50 premium-glow"
                 >
                   <span className="relative z-10">Inscription</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-700 via-purple-700 to-pink-700 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-900 via-blue-900 to-emerald-900 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                 </Link>
               </div>
             )}
@@ -443,12 +461,12 @@ export default function Navbar() {
                   </Link>
                 </>
               )}
-              {session.user.role === 'admin' && (
+              {session.user.role === 'superadmin' && (
                 <Link
-                  href="/admin"
-                  className="block px-4 py-3 text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors duration-300"
+                  href="/superadmin"
+                  className="block px-4 py-3 text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-purple-50 dark:hover:bg-purple-900/20 rounded-lg transition-colors duration-300"
                 >
-                  Admin
+                  Super Admin
                 </Link>
               )}
             </>
@@ -456,9 +474,9 @@ export default function Navbar() {
           <div className="pt-4 space-y-2">
             {session ? (
               <>
-                <div className="px-4 py-3 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg">
+                <div className="px-4 py-3 bg-gradient-to-r from-indigo-50 to-emerald-50 dark:from-indigo-900/20 dark:to-emerald-900/20 rounded-lg">
                   <div className="flex items-center space-x-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 flex items-center justify-center text-white font-bold">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-r from-indigo-800 to-emerald-800 flex items-center justify-center text-white font-bold premium-glow">
                       {session.user.name?.charAt(0).toUpperCase()}
                     </div>
                     <span className="text-base font-bold text-gray-800 dark:text-gray-200">
@@ -483,7 +501,7 @@ export default function Navbar() {
                 </Link>
                 <Link
                   href="/register"
-                  className="block px-4 py-3 bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white font-bold rounded-lg text-center transition-all duration-300 hover:shadow-lg"
+                  className="block px-4 py-3 bg-gradient-to-r from-indigo-800 via-blue-800 to-emerald-800 text-white font-bold rounded-lg text-center transition-all duration-300 hover:shadow-xl premium-glow"
                 >
                   Inscription
                 </Link>

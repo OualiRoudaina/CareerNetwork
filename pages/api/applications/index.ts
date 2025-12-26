@@ -36,8 +36,8 @@ export default async function handler(
         return res.status(404).json({ message: 'Job not found' });
       }
 
-      if (!job.isActive) {
-        return res.status(400).json({ message: 'This job is not active' });
+      if (!job.isActive || job.status !== 'approved') {
+        return res.status(400).json({ message: 'This job is not active or not approved' });
       }
 
       // Vérifier si l'utilisateur a déjà postulé

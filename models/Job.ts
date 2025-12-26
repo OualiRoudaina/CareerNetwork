@@ -16,6 +16,11 @@ export interface IJob extends Document {
   type: 'full-time' | 'part-time' | 'contract' | 'internship';
   postedBy?: mongoose.Types.ObjectId;
   isActive: boolean;
+  status: 'pending' | 'approved' | 'rejected';
+  rejectionReason?: string;
+  approvedBy?: mongoose.Types.ObjectId;
+  approvedAt?: Date;
+  views: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -65,9 +70,29 @@ const JobSchema: Schema = new Schema(
       type: Boolean,
       default: true,
     },
+    status: {
+      type: String,
+      enum: ['pending', 'approved', 'rejected'],
+      default: 'pending',
+    },
+    rejectionReason: {
+      type: String,
+    },
+    approvedBy: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+    },
+    approvedAt: {
+      type: Date,
+    },
+    views: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
+    strictPopulate: false, // Désactiver strictPopulate pour permettre le populate de champs optionnels
   }
 );
 

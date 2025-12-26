@@ -38,11 +38,27 @@ export default function RecruiterDashboard() {
     }
   }, [status, session, router]);
 
+  const [stats, setStats] = useState<any>(null);
+  const [selectedJobs, setSelectedJobs] = useState<string[]>([]);
+
   useEffect(() => {
     if (session && session.user.userType === 'recruiter') {
       fetchJobs();
+      fetchStats();
     }
   }, [session]);
+
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/recruiter/stats');
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (error) {
+      console.error('Error fetching stats:', error);
+    }
+  };
 
   const fetchJobs = async () => {
     try {
@@ -164,9 +180,42 @@ export default function RecruiterDashboard() {
 
       if (response.ok) {
         fetchJobs();
+        fetchStats();
       }
     } catch (error) {
       console.error('Error toggling job status:', error);
+    }
+  };
+
+  const handleBatchAction = async (action: string) => {
+    if (selectedJobs.length === 0) {
+      setAlert({ message: 'Veuillez sélectionner au moins une offre', type: 'error' });
+      return;
+    }
+
+    if (!confirm(`Êtes-vous sûr de vouloir ${action} ${selectedJobs.length} offre(s) ?`)) {
+      return;
+    }
+
+    try {
+      const response = await fetch('/api/recruiter/jobs/batch', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, jobIds: selectedJobs }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setAlert({ message: data.message, type: 'success' });
+        setSelectedJobs([]);
+        fetchJobs();
+        fetchStats();
+      } else {
+        setAlert({ message: data.message || 'Erreur', type: 'error' });
+      }
+    } catch (error) {
+      setAlert({ message: 'Erreur de connexion', type: 'error' });
     }
   };
 
@@ -186,33 +235,103 @@ export default function RecruiterDashboard() {
       </Head>
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-grow bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <main className="flex-grow bg-gray-50 dark:bg-gray-900 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <div className="flex justify-between items-center mb-8">
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                Mes offres d'emploi
+                Tableau de bord Recruteur
               </h1>
-              <button
-                onClick={() => {
-                  setShowJobForm(!showJobForm);
-                  setEditingJob(null);
-                  setJobForm({
-                    title: '',
-                    company: '',
-                    location: '',
-                    description: '',
-                    requirements: '',
-                    skills: '',
-                    experience: '',
-                    salaryMin: '',
-                    salaryMax: '',
-                    type: 'full-time',
-                  });
-                }}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                {showJobForm ? 'Annuler' : '+ Nouvelle offre'}
-              </button>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => router.push('/recruiter/company')}
+                  className="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700"
+                >
+                  Mon entreprise
+                </button>
+                <button
+                  onClick={() => router.push('/recruiter/templates')}
+                  className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                >
+                  Templates
+                </button>
+                <button
+                  onClick={() => router.push('/recruiter/candidates')}
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                >
+                  Rechercher candidats
+                </button>
+                <button
+                  onClick={() => {
+                    setShowJobForm(!showJobForm);
+                    setEditingJob(null);
+                    setJobForm({
+                      title: '',
+                      company: '',
+                      location: '',
+                      description: '',
+                      requirements: '',
+                      skills: '',
+                      experience: '',
+                      salaryMin: '',
+                      salaryMax: '',
+                      type: 'full-time',
+                    });
+                  }}
+                  className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                >
+                  {showJobForm ? 'Annuler' : '+ Nouvelle offre'}
+                </button>
+              </div>
+            </div>
+
+            {/* Statistiques */}
+            {stats && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Total offres</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.stats.totalJobs}</p>
+                      <p className="text-xs text-gray-500 mt-1">{stats.stats.activeJobs} actives</p>
+                    </div>
+                    <div className="text-blue-500 text-4xl">📋</div>
+                  </div>
+                </div>
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Vues totales</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.stats.totalViews}</p>
+                    </div>
+                    <div className="text-green-500 text-4xl">👁️</div>
+                  </div>
+                </div>
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Candidatures</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.stats.totalApplications}</p>
+                      <p className="text-xs text-gray-500 mt-1">{stats.stats.pendingApplications} en attente</p>
+                    </div>
+                    <div className="text-purple-500 text-4xl">📝</div>
+                  </div>
+                </div>
+                <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">Taux de conversion</p>
+                      <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.stats.conversionRate}%</p>
+                    </div>
+                    <div className="text-orange-500 text-4xl">📊</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className="mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+                Mes offres d'emploi
+              </h2>
             </div>
 
             {alert && (
@@ -378,16 +497,69 @@ export default function RecruiterDashboard() {
               </div>
             )}
 
+            {selectedJobs.length > 0 && (
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-4">
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-blue-800 dark:text-blue-200">
+                    {selectedJobs.length} offre(s) sélectionnée(s)
+                  </span>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => handleBatchAction('activate')}
+                      className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+                    >
+                      Activer
+                    </button>
+                    <button
+                      onClick={() => handleBatchAction('deactivate')}
+                      className="px-3 py-1 text-sm bg-yellow-600 text-white rounded hover:bg-yellow-700"
+                    >
+                      Désactiver
+                    </button>
+                    <button
+                      onClick={() => handleBatchAction('delete')}
+                      className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+                    >
+                      Supprimer
+                    </button>
+                    <button
+                      onClick={() => setSelectedJobs([])}
+                      className="px-3 py-1 text-sm bg-gray-300 text-gray-700 rounded hover:bg-gray-400"
+                    >
+                      Annuler
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
             <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                   <thead className="bg-gray-50 dark:bg-gray-700">
                     <tr>
+                      <th className="px-6 py-3 text-left">
+                        <input
+                          type="checkbox"
+                          checked={selectedJobs.length === jobs.length && jobs.length > 0}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedJobs(jobs.map((j) => String(j._id)));
+                              } else {
+                                setSelectedJobs([]);
+                              }
+                            }}
+                          className="rounded border-gray-300"
+                        />
+                      </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
                         Titre
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
                         Entreprise
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
+                        Vues
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300">
                         Statut
@@ -398,17 +570,36 @@ export default function RecruiterDashboard() {
                     </tr>
                   </thead>
                   <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-                    {jobs.map((job) => (
-                      <tr key={job._id.toString()}>
+                    {jobs.map((job) => {
+                      const jobId = String(job._id);
+                      return (
+                      <tr key={jobId}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <input
+                            type="checkbox"
+                            checked={selectedJobs.includes(jobId)}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                setSelectedJobs([...selectedJobs, jobId]);
+                              } else {
+                                setSelectedJobs(selectedJobs.filter((id) => id !== jobId));
+                              }
+                            }}
+                            className="rounded border-gray-300"
+                          />
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                           {job.title}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
                           {job.company}
                         </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                          {job.views || 0}
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                           <button
-                            onClick={() => toggleJobStatus(job._id.toString(), job.isActive)}
+                            onClick={() => toggleJobStatus(jobId, job.isActive)}
                             className={`px-2 py-1 text-xs font-semibold rounded-full ${
                               job.isActive
                                 ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
@@ -426,20 +617,21 @@ export default function RecruiterDashboard() {
                             Modifier
                           </button>
                           <button
-                            onClick={() => router.push(`/recruiter/jobs/${job._id}`)}
+                            onClick={() => router.push(`/recruiter/jobs/${jobId}`)}
                             className="text-green-600 hover:text-green-800 dark:text-green-400"
                           >
                             Candidatures
                           </button>
                           <button
-                            onClick={() => handleDelete(job._id.toString())}
+                            onClick={() => handleDelete(jobId)}
                             className="text-red-600 hover:text-red-800 dark:text-red-400"
                           >
                             Supprimer
                           </button>
                         </td>
                       </tr>
-                    ))}
+                    );
+                    })}
                   </tbody>
                 </table>
               </div>

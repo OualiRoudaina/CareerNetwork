@@ -12,8 +12,13 @@ export default function JobApplications() {
   const { data: session, status } = useSession();
   const { id } = router.query;
   const [applications, setApplications] = useState<IApplication[]>([]);
+  const [filteredApplications, setFilteredApplications] = useState<IApplication[]>([]);
   const [job, setJob] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [filters, setFilters] = useState({
+    status: 'all',
+    search: '',
+  });
 
   useEffect(() => {
     if (status === 'unauthenticated' || (status === 'authenticated' && session?.user.userType !== 'recruiter')) {
@@ -42,6 +47,7 @@ export default function JobApplications() {
       if (applicationsResponse.ok) {
         const applicationsData = await applicationsResponse.json();
         setApplications(applicationsData.applications);
+        setFilteredApplications(applicationsData.applications);
       }
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -92,6 +98,46 @@ export default function JobApplications() {
     }
   };
 
+  useEffect(() => {
+    let filtered = [...applications];
+
+    // Filtre par statut
+    if (filters.status !== 'all') {
+      filtered = filtered.filter((app) => app.status === filters.status);
+    }
+
+    // Filtre par recherche
+    if (filters.search) {
+      const searchLower = filters.search.toLowerCase();
+      filtered = filtered.filter(
+        (app) =>
+          app.candidate?.name?.toLowerCase().includes(searchLower) ||
+          app.candidate?.email?.toLowerCase().includes(searchLower)
+      );
+    }
+
+    setFilteredApplications(filtered);
+  }, [filters, applications]);
+
+  const handleExport = async () => {
+    try {
+      const response = await fetch(`/api/recruiter/applications/export?jobId=${id}&format=csv`);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `candidatures_${job?.title}_${Date.now()}.csv`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      }
+    } catch (error) {
+      console.error('Error exporting applications:', error);
+    }
+  };
+
   if (status === 'loading' || loading) {
     return <Loader />;
   }
@@ -108,7 +154,7 @@ export default function JobApplications() {
       </Head>
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-grow bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <main className="flex-grow bg-gray-50 dark:bg-gray-900 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <button
               onClick={() => router.push('/recruiter/dashboard')}
@@ -128,11 +174,57 @@ export default function JobApplications() {
               </div>
             )}
 
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
-              Candidatures ({applications.length})
-            </h2>
+            <div className="flex justify-between items-center mb-6">
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+                Candidatures ({filteredApplications.length} / {applications.length})
+              </h2>
+              {applications.length > 0 && (
+                <button
+                  onClick={handleExport}
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                >
+                  📥 Exporter en CSV
+                </button>
+              )}
+            </div>
 
-            {applications.length === 0 ? (
+            {/* Filtres */}
+            {applications.length > 0 && (
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 mb-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Statut
+                    </label>
+                    <select
+                      value={filters.status}
+                      onChange={(e) => setFilters({ ...filters, status: e.target.value })}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    >
+                      <option value="all">Tous</option>
+                      <option value="pending">En attente</option>
+                      <option value="reviewed">En cours d'examen</option>
+                      <option value="accepted">Acceptées</option>
+                      <option value="rejected">Refusées</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                      Rechercher (nom, email)
+                    </label>
+                    <input
+                      type="text"
+                      value={filters.search}
+                      onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                      placeholder="Rechercher..."
+                      className="w-full px-4 py-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 dark:text-white"
+                    />
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {filteredApplications.length === 0 ? (
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-8 text-center">
                 <p className="text-gray-600 dark:text-gray-400">
                   Aucune candidature pour cette offre pour le moment
@@ -140,7 +232,7 @@ export default function JobApplications() {
               </div>
             ) : (
               <div className="space-y-4">
-                {applications.map((application: any) => (
+                {filteredApplications.map((application: any) => (
                   <div
                     key={application._id}
                     className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6"

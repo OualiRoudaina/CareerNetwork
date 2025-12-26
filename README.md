@@ -21,8 +21,9 @@ Application web moderne développée avec Next.js et MongoDB permettant aux étu
 
 ### 4. Recommandations IA
 - Bouton "Trouver mes offres" qui analyse le profil utilisateur
-- Recommandations basées sur les compétences (structure prête pour l'intégration IA)
-- Affichage dynamique des offres recommandées
+- **Service ML intégré** avec SentenceTransformers pour des recommandations intelligentes
+- Similarité sémantique basée sur les embeddings pour un matching précis
+- Affichage dynamique des offres recommandées avec scores de pertinence
 
 ### 5. Interface Admin
 - Tableau de bord avec gestion des utilisateurs
@@ -37,6 +38,9 @@ Application web moderne développée avec Next.js et MongoDB permettant aux étu
 - **NextAuth** - Authentification
 - **Tailwind CSS** - Styling
 - **React Hook Form** - Gestion des formulaires
+- **FastAPI** - Service ML pour les recommandations
+- **SentenceTransformers** - Modèle d'embeddings sémantiques
+- **scikit-learn** - Calcul de similarité cosinus
 
 ## 📦 Installation
 
@@ -65,6 +69,9 @@ NEXTAUTH_SECRET=your-secret-key-here-generate-with-openssl-rand-base64-32
 
 # JWT Secret (optionnel)
 JWT_SECRET=your-jwt-secret-here
+
+# Service ML (optionnel, pour les recommandations IA)
+ML_SERVICE_URL=http://localhost:8000
 ```
 
 **Pour générer NEXTAUTH_SECRET :**
@@ -119,6 +126,11 @@ CareerNetwork/
 │   └── globals.css
 ├── types/              # Types TypeScript
 │   └── next-auth.d.ts
+├── ml-service/         # Service ML Python
+│   ├── app.py         # Serveur FastAPI
+│   ├── init_model.py  # Initialisation du modèle
+│   ├── sync_mongodb.py # Synchronisation MongoDB
+│   └── requirements.txt
 └── package.json
 ```
 
@@ -149,23 +161,36 @@ async function createAdmin() {
 createAdmin();
 ```
 
-## 🔗 Intégration avec l'API IA
+## 🤖 Service ML de Recommandation
 
-La structure est prête pour intégrer l'API IA. Dans `pages/api/recommend.ts`, remplacez la logique actuelle par :
+Le système de recommandation utilise un service Python FastAPI avec SentenceTransformers pour des recommandations intelligentes basées sur la similarité sémantique.
 
-```typescript
-const aiResponse = await fetch(`${process.env.AI_API_URL}/api/recommend`, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    skills: userSkills,
-    education: userEducation,
-    experience: userExperience,
-  }),
-});
-const aiData = await aiResponse.json();
-const recommendedJobs = await Job.find({ _id: { $in: aiData.jobIds } });
+### Installation du service ML
+
+1. **Installer les dépendances Python:**
+```bash
+pip install -r ml-service/requirements.txt
 ```
+
+2. **Initialiser le modèle avec vos jobs MongoDB:**
+```bash
+export MONGODB_URI="mongodb://localhost:27017/careernetwork"
+python ml-service/sync_mongodb.py
+```
+
+3. **Démarrer le service ML:**
+```bash
+cd ml-service
+uvicorn app:app --reload --port 8000
+```
+
+4. **Configurer Next.js:**
+Ajoutez dans `.env.local`:
+```env
+ML_SERVICE_URL=http://localhost:8000
+```
+
+📖 **Documentation complète:** Voir [INTEGRATION_ML.md](INTEGRATION_ML.md) et [QUICK_START_ML.md](QUICK_START_ML.md)
 
 ## 🎨 Personnalisation
 

@@ -66,7 +66,7 @@ export default function Recommendations() {
       </Head>
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-grow bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+        <main className="flex-grow bg-gray-50 dark:bg-gray-900 pt-24 pb-12 px-4 sm:px-6 lg:px-8">
           <div className="max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
               Recommandations IA
@@ -204,10 +204,10 @@ export default function Recommendations() {
       </Head>
       <div className="flex flex-col min-h-screen">
         <Navbar />
-        <main className="flex-grow pt-20 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
+        <main className="flex-grow pt-24 bg-gradient-to-b from-gray-50 to-white dark:from-gray-900 dark:to-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             {/* Hero Section */}
-            <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-pink-600 rounded-3xl p-12 mb-12 shadow-2xl relative overflow-hidden animate-fadeIn">
+            <div className="bg-gradient-to-br from-indigo-900 via-blue-900 to-emerald-900 rounded-3xl p-12 mb-12 shadow-2xl relative overflow-hidden animate-fadeIn premium-glow">
               <div className="absolute inset-0 opacity-10" style={{
                 backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
               }}></div>
@@ -244,7 +244,7 @@ export default function Recommendations() {
                       </svg>
                     </>
                   )}
-                  <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-purple-50 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-indigo-50 to-emerald-50 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left"></div>
                 </button>
 
                 {/* Features */}
@@ -283,7 +283,7 @@ export default function Recommendations() {
                 <div className="relative mb-8">
                   <div className="w-24 h-24 border-4 border-blue-200 dark:border-blue-900 rounded-full animate-spin border-t-blue-600 dark:border-t-blue-400"></div>
                   <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                    <div className="w-16 h-16 border-4 border-purple-200 dark:border-purple-900 rounded-full animate-spin border-t-purple-600 dark:border-t-purple-400" style={{ animationDirection: 'reverse', animationDuration: '1s' }}></div>
+                    <div className="w-16 h-16 border-4 border-green-200 dark:border-green-900 rounded-full animate-spin border-t-green-600 dark:border-t-green-400" style={{ animationDirection: 'reverse', animationDuration: '1s' }}></div>
                   </div>
                 </div>
                 <p className="text-lg font-semibold text-gray-700 dark:text-gray-300 mb-2">
@@ -299,12 +299,12 @@ export default function Recommendations() {
               <div className="animate-fadeIn">
                 <div className="mb-8 flex items-center justify-between">
                   <h2 className="text-3xl font-black text-gray-900 dark:text-white flex items-center">
-                    <span className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center text-white mr-3">
+                    <span className="w-10 h-10 bg-gradient-to-br from-indigo-800 to-emerald-800 rounded-xl flex items-center justify-center text-white mr-3 premium-glow">
                       ✨
                     </span>
                     Offres recommandées pour vous
                   </h2>
-                  <span className="px-4 py-2 bg-gradient-to-r from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 text-blue-700 dark:text-blue-300 rounded-full font-bold text-sm">
+                  <span className="px-4 py-2 bg-gradient-to-r from-indigo-100 to-emerald-100 dark:from-indigo-900/30 dark:to-emerald-900/30 text-indigo-700 dark:text-indigo-300 rounded-full font-bold text-sm">
                     {jobs.length} offre{jobs.length > 1 ? 's' : ''}
                   </span>
                 </div>
@@ -320,7 +320,7 @@ export default function Recommendations() {
 
             {!loading && jobs.length === 0 && !alert && (
               <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-3xl shadow-lg animate-fadeIn border border-gray-100 dark:border-gray-700">
-                <div className="w-32 h-32 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
+                <div className="w-32 h-32 bg-gradient-to-br from-indigo-100 to-emerald-100 dark:from-indigo-900/30 dark:to-emerald-900/30 rounded-full flex items-center justify-center mx-auto mb-6">
                   <svg className="w-16 h-16 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>

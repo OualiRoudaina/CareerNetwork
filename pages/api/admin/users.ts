@@ -10,8 +10,8 @@ export default async function handler(
 ) {
   const session = await getServerSession(req, res, authOptions);
 
-  if (!session || session.user.role !== 'admin') {
-    return res.status(401).json({ message: 'Unauthorized - Admin only' });
+  if (!session || session.user.role !== 'superadmin') {
+    return res.status(401).json({ message: 'Unauthorized - Super Admin only' });
   }
 
   await dbConnect();

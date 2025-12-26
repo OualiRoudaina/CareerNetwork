@@ -102,6 +102,27 @@ interface JobCardProps {
 }
 
 export default function JobCard({ job }: JobCardProps) {
+  // Debug: Vérifier les données ML
+  if (typeof window !== 'undefined') {
+    const jobAny = job as any;
+    if (jobAny.skillMatchPercentage !== undefined || jobAny.matchingSkills) {
+      console.log('JobCard - ML Data found:', {
+        jobId: job._id,
+        title: job.title,
+        skillMatchPercentage: jobAny.skillMatchPercentage,
+        matchingSkills: jobAny.matchingSkills,
+        hasSkillMatchPercentage: jobAny.skillMatchPercentage !== undefined,
+        hasMatchingSkills: jobAny.matchingSkills !== undefined,
+      });
+    } else {
+      console.log('JobCard - No ML Data:', {
+        jobId: job._id,
+        title: job.title,
+        allKeys: Object.keys(jobAny),
+      });
+    }
+  }
+
   const formatSalary = () => {
     if (!job.salary) return null;
     const { min, max } = job.salary;
@@ -114,10 +135,10 @@ export default function JobCard({ job }: JobCardProps) {
     <Link href={`/jobs/${job._id}`}>
       <div className="group relative bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 overflow-hidden border border-gray-100 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:-translate-y-2 card-interactive">
         {/* Gradient overlay on hover */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 via-purple-500/5 to-pink-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+        <div className="absolute inset-0 bg-gradient-to-br from-indigo-800/5 via-blue-800/5 to-emerald-800/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
         
         {/* Top accent bar */}
-        <div className="h-1.5 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
+        <div className="h-1.5 bg-gradient-to-r from-indigo-800 via-blue-800 to-emerald-800 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-500 origin-left"></div>
 
         <div className="relative p-6 z-10">
           {/* Header */}
@@ -131,7 +152,7 @@ export default function JobCard({ job }: JobCardProps) {
               </p>
             </div>
             <div className="relative">
-              <span className="inline-flex items-center px-4 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg group-hover:shadow-xl group-hover:scale-110 transition-all duration-300">
+              <span className="inline-flex items-center px-4 py-1.5 text-xs font-bold rounded-full bg-gradient-to-r from-indigo-800 to-emerald-800 text-white shadow-xl group-hover:shadow-2xl group-hover:scale-110 transition-all duration-300 premium-glow">
                 {job.type === 'full-time' && '⏰ Temps plein'}
                 {job.type === 'part-time' && '🕐 Temps partiel'}
                 {job.type === 'contract' && '📄 Contrat'}
@@ -199,12 +220,62 @@ export default function JobCard({ job }: JobCardProps) {
             {job.description}
           </p>
 
+          {/* ML Data - Pourcentage de correspondance */}
+          {(() => {
+            const jobAny = job as any;
+            const hasSkillMatch = jobAny.skillMatchPercentage !== undefined && jobAny.skillMatchPercentage !== null;
+            
+            // Debug log
+            if (typeof window !== 'undefined') {
+              console.log('JobCard Render - Checking ML Data:', {
+                jobId: job._id,
+                hasSkillMatch,
+                skillMatchPercentage: jobAny.skillMatchPercentage,
+                matchingSkills: jobAny.matchingSkills,
+                type: typeof jobAny.skillMatchPercentage,
+              });
+            }
+            
+            if (hasSkillMatch) {
+              return (
+                <div className="mb-4 p-3 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 rounded-xl border border-green-200 dark:border-green-800">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-semibold text-green-700 dark:text-green-300 uppercase tracking-wide">
+                      Correspondance IA
+                    </span>
+                    <span className="text-lg font-black text-green-600 dark:text-green-400">
+                      {jobAny.skillMatchPercentage}%
+                    </span>
+                  </div>
+                  {jobAny.matchingSkills && jobAny.matchingSkills.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5 mt-2">
+                      {jobAny.matchingSkills.slice(0, 3).map((skill: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-0.5 text-xs font-semibold bg-green-200 dark:bg-green-800 text-green-800 dark:text-green-200 rounded-full"
+                        >
+                          {skill}
+                        </span>
+                      ))}
+                      {jobAny.matchingSkills.length > 3 && (
+                        <span className="px-2 py-0.5 text-xs font-semibold bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 rounded-full">
+                          +{jobAny.matchingSkills.length - 3}
+                        </span>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+            return null;
+          })()}
+
           {/* Footer */}
           <div className="pt-4 border-t border-gray-200 dark:border-gray-700 flex justify-between items-center">
             <span className="text-xs text-gray-500 dark:text-gray-500">
               Publié récemment
             </span>
-            <div className="flex items-center text-sm font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent group-hover:from-blue-700 group-hover:to-purple-700 transition-all duration-300">
+            <div className="flex items-center text-sm font-bold bg-gradient-to-r from-indigo-800 to-emerald-800 bg-clip-text text-transparent group-hover:from-indigo-900 group-hover:to-emerald-900 transition-all duration-300">
               <span>Voir les détails</span>
               <svg className="w-4 h-4 ml-1 transform group-hover:translate-x-2 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
